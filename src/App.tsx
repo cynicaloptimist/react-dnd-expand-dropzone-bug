@@ -1,26 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { DndProvider, useDrop, useDrag } from "react-dnd";
+import HTML5Backend from "react-dnd-html5-backend";
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <DndProvider backend={HTML5Backend}>
+        <DraggableItem />
+        <DropZone />
+        <DraggableItem />
+      </DndProvider>
     </div>
   );
+}
+
+function DropZone() {
+  const [canDrop, drop] = useDrop({
+    accept: "item",
+    collect: monitor => monitor.canDrop()
+  });
+
+  const style: React.CSSProperties = {
+    height: canDrop ? "20px" : "0px",
+    backgroundColor: "blue"
+  };
+
+  return <div ref={drop} style={style} />
+}
+
+function DraggableItem() {
+  const [, drag] = useDrag({
+    item: { type: "item" }
+  });
+  return <div ref={drag}>Drag Me</div>;
 }
 
 export default App;
